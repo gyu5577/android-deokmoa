@@ -35,6 +35,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/* TMDB API 연결 방법(api 사용한 작품 검색 사용 방법)
+* TMDB에서 회원가입 후 각자 api key 받기
+* api key 보안을 위해 각자의 local.properties에 설정
+* TMDB_API_KEY=apikey값 (""는 넣지 않음)*/
 class AddReviewActivity : AppCompatActivity() {
     //api 관련 변수
     private lateinit var searchAdapter: SearchAdapter
