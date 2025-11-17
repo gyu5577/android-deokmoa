@@ -4,8 +4,11 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,10 +28,18 @@ import java.io.FileOutputStream
 import java.io.InputStream
 import java.lang.Exception
 import android.R as AndroidR
-import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.deokmoa.data.api.ApiConnect
+import com.example.deokmoa.data.api.MovieResult
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class AddReviewActivity : AppCompatActivity() {
-
+    //api 관련 변수
+    private lateinit var searchAdapter: SearchAdapter
+    private val apiService: ApiConnect by lazy { ApiConnect.create()}
+    private val apiKey = BuildConfig.TMDB_API_KEY
     private lateinit var binding: ActivityAddReviewBinding
     private val database by lazy { AppDatabase.getDatabase(this) }
     private var selectedImageUri: Uri? = null
@@ -45,29 +56,6 @@ class AddReviewActivity : AppCompatActivity() {
             binding.ivSelectedImage.load(it)
         }
     }
-     private val permissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            pickImageLauncher.launch("image/*")
-        } else{
-            Toast.makeText(this, "갤러리 접근 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
-        }
-     }
-    private fun showPermissionAlertDialog(permission: String) {
-        AlertDialog.Builder(this)
-            .setTitle("권한 승인이 필요합니다.")
-            .setMessage("사진을 선택 하려면 권한이 필요합니다.")
-            .setPositiveButton("허용하기") { _, _ ->
-                pickImageLauncher.launch("image/*")
-            }
-            .setNegativeButton("허용 안함") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
-            .show()
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +63,8 @@ class AddReviewActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupToolbar()
-
+        setupSearchRecyclerView()
+        setupSearchEditText()
         setupCategorySpinner()
 
         // "수정 모드"인지 확인
@@ -93,20 +82,7 @@ class AddReviewActivity : AppCompatActivity() {
         }
 
         binding.btnSelectImage.setOnClickListener {
-            val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE
-            when {
-                // 권한이 있으면 갤러리 열기
-                ContextCompat.checkSelfPermission(
-                    this,
-                    permission
-                ) == PackageManager.PERMISSION_GRANTED -> {
-                    pickImageLauncher.launch("image/*")
-                }
-                else -> {
-                    // 다이얼로그 먼저(항상)
-                    showPermissionAlertDialog(permission)
-                }
-            }
+            pickImageLauncher.launch("image/*")
         }
 
         binding.btnSaveReview.setOnClickListener {
@@ -165,6 +141,63 @@ class AddReviewActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun setupSearchRecyclerView() {
+        searchAdapter = SearchAdapter { movie ->
+            binding.etTitle.setText(movie.title) //제목 자동 채우기
+            binding.rvSearchResults.visibility = View.GONE // 검색 결과 숨기기
+            binding.etApi.text?.clear() // 검색어 초기화
+        }
+        binding.rvSearchResults.apply {
+            adapter = searchAdapter
+            layoutManager = LinearLayoutManager(this@AddReviewActivity)
+        }
+    }
+
+    private fun setupSearchEditText() {
+        binding.etApi.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val query = s.toString()
+                if (query.isNotBlank()) {
+                    searchMoviesApi(query)
+                } else {
+                    binding.rvSearchResults.visibility = View.GONE
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
+    private fun searchMoviesApi(query: String) {
+        if (apiKey.isBlank() || apiKey == "null") {
+            Log.e("AddReviewActivity", "TMDB_API_KEY가 설정되지 않았습니다.")
+            binding.rvSearchResults.visibility = View.GONE
+            return
+        }
+
+        apiService.searchMovie(apiKey, query).enqueue(object : Callback<MovieResult> {
+            override fun onResponse(call: Call<MovieResult>, response: Response<MovieResult>) {
+                if (response.isSuccessful) {
+                    val movies = response.body()?.results ?: emptyList()
+                    if (movies.isNotEmpty()) {
+                        searchAdapter.setItems(movies)
+                        binding.rvSearchResults.visibility = View.VISIBLE
+                    } else {
+                        binding.rvSearchResults.visibility = View.GONE
+                    }
+                }
+            }
+            // api 연결 실패시 로그메세지
+            override fun onFailure(call: Call<MovieResult>, t: Throwable) {
+                Log.e("AddReviewActivity", "API Call Failed ${t.message}")
+                binding.rvSearchResults.visibility = View.GONE
+            }
+        })
+    }
+
     // 카테고리 스피너
     private fun setupCategorySpinner() {
         val categories = Category.values().map { it.displayName }

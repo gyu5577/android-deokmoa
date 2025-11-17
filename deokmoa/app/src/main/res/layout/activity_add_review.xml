@@ -45,6 +45,7 @@
                 android:layout_marginTop="25dp"
                 android:layout_marginBottom="25dp"
                 android:hint="작품을 검색해보세요"
+                app:actionViewClass="androidx.appcompat.widget.SearchView"
                 app:endIconDrawable="@drawable/search_ic"
                 app:endIconTint="#9AA3B2"
                 app:endIconMode="custom"
@@ -67,6 +68,17 @@
                     android:textColor="#6B7280"
                     android:textColorHint="#9AA3B2" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <!--api 검색리스트 확인-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_search_results"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:visibility="gone"
+                tools:visibility="visible"
+                tools:listitem="@layout/item_search_result"
+                tools:itemCount="3"/>
 
             <!-- 카테고리 라벨 -->
             <TextView
