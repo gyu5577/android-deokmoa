@@ -19,6 +19,7 @@ import com.google.android.material.chip.Chip
 import kotlinx.coroutines.launch
 import java.io.File
 import java.lang.Exception
+import android.view.Menu
 
 class ReviewDetailActivity : AppCompatActivity() {
 
@@ -63,6 +64,11 @@ class ReviewDetailActivity : AppCompatActivity() {
                     .show()
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.review_detail_toolbar, menu)
+        return true
     }
 
         private fun setupToolbar() {
