@@ -2,6 +2,7 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Deokmoa" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/main</item>
+        <item name="colorSecondary">#89E5E0</item>
         <item name="android:statusBarColor">@color/white</item>
         <item name="actionMenuTextColor">@color/black</item>
     </style>

@@ -91,7 +91,7 @@
                 android:text="카테고리"
                 android:textSize="18sp" />
 
-            <!-- 카테고리 선택 (기존 Spinner 유지) -->
+            <!-- 카테고리 선택 -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilCategory"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -108,7 +108,6 @@
                 app:boxCornerRadiusTopStart="12dp"
                 app:boxStrokeColor="#B5BCCE">
 
-                <!-- 위 코드의 Spinner 그대로 사용 (id 유지) -->
                 <Spinner
                     android:id="@+id/spinner_category"
                     android:layout_width="match_parent"
@@ -132,6 +131,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginTop="5dp"
                 android:text="기억하고 싶은 해당 작품의 사진을 올려주세요"
                 android:textColor="#667085"
                 android:textSize="12sp" />
@@ -142,12 +142,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="55dp"
                 android:layout_marginBottom="40dp"
                 android:text="이미지 선택"
                 android:backgroundTint="@color/main"/>
 
-            <!-- 선택된 이미지 미리보기 (위 코드의 iv_selected_image) -->
+            <!-- 선택된 이미지 미리보기  -->
             <FrameLayout
                 android:id="@+id/imgContainer"
                 android:layout_width="wrap_content"
@@ -167,7 +167,6 @@
                     android:layout_marginTop="10dp"
                     tools:src="@tools:sample/backgrounds/scenic" />
 
-                <!-- 필요하면 삭제 버튼도 나중에 코드로 사용 가능 -->
                 <ImageView
                     android:id="@+id/btnDeleteImg"
                     android:layout_width="24dp"
