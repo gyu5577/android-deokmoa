@@ -17,6 +17,7 @@ import com.example.deokmoa.databinding.ItemReviewBinding
 class ReviewAdapter(private val onItemClicked: (Review) -> Unit) :
     ListAdapter<Review, ReviewAdapter.ReviewViewHolder>(DiffCallback) {
     private var original: List<Review> = emptyList()
+    private var isFiltering = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewViewHolder {
         val binding = ItemReviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -32,19 +33,23 @@ class ReviewAdapter(private val onItemClicked: (Review) -> Unit) :
     }
     override fun submitList(list: List<Review>?) {
         super.submitList(list)
-        if(list != null) {
+        if(list != null && !isFiltering) {
             original = list //전체 리스트 저장
         }
     }
     fun filter(query: String) {
+        isFiltering = true
+
         if(query.isBlank()){
-            submitList(original)
+            super.submitList(original)
+            isFiltering = false
             return
         }
         val filteredList = original.filter { review ->
             review.title.contains(query, ignoreCase = true)
         }
-        submitList(filteredList)
+        super.submitList(filteredList)
+        isFiltering = false
     }
 
 
