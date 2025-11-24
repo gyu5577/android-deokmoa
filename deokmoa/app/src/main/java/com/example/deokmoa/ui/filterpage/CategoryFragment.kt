@@ -1,60 +1,87 @@
 package com.example.deokmoa.ui.filterpage
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.deokmoa.R
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.example.deokmoa.data.AppDatabase
+import com.example.deokmoa.data.Category
+import com.example.deokmoa.databinding.FragmentCategoryBinding
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [CategoryFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CategoryFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    // 뷰 바인딩
+    private var _binding: FragmentCategoryBinding? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_category, container, false)
+    ): View {
+        _binding = FragmentCategoryBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CategoryFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CategoryFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        loadTopCategories()
+    }
+
+    private fun loadTopCategories() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val db = AppDatabase.getDatabase(requireContext())
+            // reviewDao를 통해 상위 4개 카테고리 가져오기
+            val topList = db.reviewDao().getTopCategories()
+
+            // 1위 -> 큰 박스 (tvMostUsedCategory)
+            if (topList.isNotEmpty()) {
+                val item = topList[0]
+                binding.tvMostUsedCategory.text = getCategoryDisplayName(item.category)
+            } else {
+                binding.tvMostUsedCategory.text = "데이터 없음"
             }
+
+            // 2위 -> 리스트 첫 줄 (tvRankCategory1)
+            if (topList.size >= 2) {
+                val item = topList[1]
+                binding.tvRankCategory1.text = getCategoryDisplayName(item.category)
+            } else {
+                binding.tvRankCategory1.text = "-"
+            }
+
+            // 3위 -> 리스트 둘째 줄 (tvRankCategory2)
+            if (topList.size >= 3) {
+                val item = topList[2]
+                binding.tvRankCategory2.text = getCategoryDisplayName(item.category)
+            } else {
+                binding.tvRankCategory2.text = "-"
+            }
+
+            // 4위 -> 리스트 셋째 줄 (tvRankCategory3)
+            if (topList.size >= 4) {
+                val item = topList[3]
+                binding.tvRankCategory3.text = getCategoryDisplayName(item.category)
+            } else {
+                binding.tvRankCategory3.text = "-"
+            }
+        }
+    }
+
+    // 영어를 한글로 바꾸는 함수
+    private fun getCategoryDisplayName(dbName: String): String {
+        return try {
+            Category.valueOf(dbName).displayName
+        } catch (e: Exception) {
+            dbName
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

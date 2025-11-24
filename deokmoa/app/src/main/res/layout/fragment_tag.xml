@@ -58,7 +58,7 @@
                 android:id="@+id/tvRankNum1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1."
+                android:text="2."
                 android:textSize="14sp"
                 android:layout_marginEnd="6dp" />
 
@@ -66,7 +66,7 @@
                 android:id="@+id/tvRankTag1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="일순위"
+                android:text="이순위"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -82,7 +82,7 @@
                 android:id="@+id/tvRankNum2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2."
+                android:text="3."
                 android:textSize="14sp"
                 android:layout_marginEnd="6dp" />
 
@@ -90,7 +90,7 @@
                 android:id="@+id/tvRankTag2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="이순위"
+                android:text="삼순위"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -105,7 +105,7 @@
                 android:id="@+id/tvRankNum3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="3."
+                android:text="4."
                 android:textSize="14sp"
                 android:layout_marginEnd="6dp" />
 
@@ -113,7 +113,7 @@
                 android:id="@+id/tvRankTag3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="삼순위"
+                android:text="사순위"
                 android:textSize="14sp" />
         </LinearLayout>
 
