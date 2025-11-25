@@ -11,7 +11,7 @@
 
     <style name="Theme.MyApp.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/main</item>
-        <item name="windowSplashScreenAnimatedIcon" tools:targetApi="31">@drawable/logo6</item>
+        <item name="windowSplashScreenAnimatedIcon" tools:targetApi="31">@drawable/logo4</item>
         <item name="postSplashScreenTheme">@style/Theme.Deokmoa</item>
     </style>
 
