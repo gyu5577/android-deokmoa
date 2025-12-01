@@ -155,7 +155,7 @@ class FilterFragment : Fragment() {
                 true
             } else {
                 val reviewTags = review.tags.split(",")
-                selectedTags.any { it in reviewTags }
+                selectedTags.all { it in reviewTags }
             }
 
             isCategoryMatch && isRatingMatch && isTagMatch
